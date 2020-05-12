@@ -1,0 +1,44 @@
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+workflow.py
+# data
+data/
+
+# my workflow
+workflow.py
+night_workflow.py
+generateREADME.py
+test*
+
+
+# pycharm
+.idea/
+
+#vim
+*.swp
+*.un~
+
+# Python:
+*.py[cod]
+*.so
+*.egg
+*.egg-info
+dist/
+build/
+
+# juyter notebook
+.ipynb_checkpoints/
+
+# pycharm
+.idea/
+
+# itchat
+itchat.pkl
+wechat_download/
+
+kaldi.zip
+kaldi/
+HMM/
