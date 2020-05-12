@@ -1,6 +1,6 @@
 # Pyprobar
 
-[![image](https://img.shields.io/badge/Pypi-0.1.1.2-green.svg)](https://pypi.org/project/pyprobar)
+[![image](https://img.shields.io/badge/Pypi-0.1.1.3-green.svg)](https://pypi.org/project/pyprobar)
 [![image](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/)
 [![image](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![image](https://img.shields.io/badge/author-K.y-orange.svg?style=flat-square&logo=appveyor)](https://github.com/beidongjiedeguang)
@@ -61,6 +61,42 @@ for idx, i in probar(range(1234), symbol_2="o"):
 ```
 
 Tip: Search`charmap`  in win10 start menu, you can find a lot of interesting characters.
+
+
+
+**Supports progress bars in different colors**:
+
+```python
+for idx, i in enumerate(a):
+    bar(idx, N, color='1')
+    time.sleep(0.01)
+```
+
+
+
+
+
+Of course, you can also add text or variables to the progress bar:
+
+```python
+for idx, i in enumerate(a):
+	text = f"what you want see is {x}"
+    bar(idx, N, text=text)
+```
+
+
+
+print RGB color string:
+
+```python
+from pyprobar.styleString import rgb_str
+text = rgb_str("I'm green!", RGB=[0,255,0])
+print(text)
+```
+
+
+
+
 
 
 
