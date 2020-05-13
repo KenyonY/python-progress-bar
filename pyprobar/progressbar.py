@@ -238,7 +238,7 @@ def bar(index, total_size,
     PERCENT, ETC_1 , ETC_2 = sepabar.currentProgress(percent, t0, terminal)
     color_percent, color_bar, color_etc, color_etc2 = sepabar.get_bar_color(N1, color, N_colors=4)
     if text != '': text += " |"
-    print(f"\r{text}{color_percent}{PERCENT} {color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF}{cursor.EraseLine(0)}",
+    print(f"\r{text}{color_percent}{PERCENT} {color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF} {cursor.EraseLine(0)}",
           end='', flush=True)
     if _index == total_size:
         print('\n')
@@ -251,7 +251,7 @@ if __name__ == "__main__":
     # print(s1, s2)
     color = [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
     for idx, i in enumerate(range(1234)):
-        bar(idx, 1234, text=s2,color='1')
+        bar(idx, 1234, text=s2,color='update_random')
         time.sleep(0.005)
 
     # for idx, i in probar(range(1234)):

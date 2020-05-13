@@ -22,6 +22,12 @@ pip install pyprobar
 28.71% |████████>>>>>>>>>>>>>>>>>  | 0:00:22|0:00:31 ETC: 05-20 18:08:15
 ```
 
+
+
+![color=1](picture/color=1.gif)
+
+![color=5](picture/color=5.gif)
+
 ## Usage
 
 Use `probar` or `bar` for different situations:
