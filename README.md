@@ -22,11 +22,9 @@ pip install pyprobar
 28.71% |████████>>>>>>>>>>>>>>>>>  | 0:00:22|0:00:31 ETC: 05-20 18:08:15
 ```
 
+<img src="picture/color=1.gif" />
 
-
-![color=1](picture/color=1.gif)
-
-![color=5](picture/color=5.gif)
+<img src="picture/color=5.gif" />
 
 ## Usage
 
@@ -78,17 +76,19 @@ for idx, i in enumerate(a):
     time.sleep(0.01)
 ```
 
-
+<img src="picture/color=1.gif" />
 
 
 
 Of course, you can also add text or variables to the progress bar:
 
 ```python
-for idx, i in enumerate(a):
+![text](picture/text.gif)for idx, i in enumerate(a):
 	text = f"what you want see is {x}"
     bar(idx, N, text=text)
 ```
+
+<img src=picture/text.gif />
 
 
 
@@ -96,11 +96,11 @@ print RGB color string:
 
 ```python
 from pyprobar.styleString import rgb_str
-text = rgb_str("I'm green!", RGB=[0,255,0])
+text = rgb_str("I'm green!", RGB_fore=[0,255,0])
 print(text)
 ```
 
-
+<img src="picture/rgb_str.jpg" />
 
 
 
