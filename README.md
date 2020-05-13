@@ -84,7 +84,7 @@ Of course, you can also add text or variables to the progress bar:
 
 ```python
 for idx, i in enumerate(a):
-	text = f"what you want see is {x}"
+    text = f"what you want see is {x}"
     bar(idx, N, text=text)
 ```
 
@@ -96,8 +96,8 @@ print RGB color string:
 
 ```python
 from pyprobar.styleString import rgb_str
-text = rgb_str("I'm green!", RGB_fore=[0,255,0])
-print(text)
+    text = rgb_str("I'm green!", RGB_fore=[0,255,0])
+    print(text)
 ```
 
 <img src="picture/rgb_str.jpg" />
