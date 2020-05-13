@@ -83,7 +83,7 @@ for idx, i in enumerate(a):
 Of course, you can also add text or variables to the progress bar:
 
 ```python
-![text](picture/text.gif)for idx, i in enumerate(a):
+for idx, i in enumerate(a):
 	text = f"what you want see is {x}"
     bar(idx, N, text=text)
 ```
