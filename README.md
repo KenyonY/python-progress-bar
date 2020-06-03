@@ -1,6 +1,6 @@
 # Pyprobar
 
-[![image](https://img.shields.io/badge/Pypi-0.1.1.3-green.svg)](https://pypi.org/project/pyprobar)
+[![image](https://img.shields.io/badge/Pypi-0.1.1.5-green.svg)](https://pypi.org/project/pyprobar)
 [![image](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/)
 [![image](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![image](https://img.shields.io/badge/author-K.y-orange.svg?style=flat-square&logo=appveyor)](https://github.com/beidongjiedeguang)
@@ -72,7 +72,7 @@ Tip: Search`charmap`  in win10 start menu, you can find a lot of interesting cha
 
 ```python
 for idx, i in enumerate(a):
-    bar(idx, N, color='1')
+    bar(idx, N, color='1') # `color` options: '1','2','3','4','5','0','update_random'
     time.sleep(0.01)
 ```
 
@@ -89,6 +89,16 @@ for idx, i in enumerate(a):
 ```
 
 <img src=picture/text.gif />
+
+multi-line text :
+
+```python
+for idx, i in enumerate(a):
+    text = f"{v1}, frame:{idx}\n"
+    bar(idx, N, text=text)
+```
+
+<img src="picture/multi_text.jpg" alt="multi_text" style="zoom:80%;" />
 
 
 
