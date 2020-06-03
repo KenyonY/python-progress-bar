@@ -205,7 +205,7 @@ def bar(index, total_size,
         terminal=True):
     """Simple progress bar display, to instead of tqdm.
 
-    :arg color: options  'constant_random', 'update_random', 'reset',
+    :arg color: options  'constant_random', 'update_random', '0','1','2',...,'n?',
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
 
     Examples
