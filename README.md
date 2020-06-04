@@ -8,7 +8,7 @@
 
 
 
-An easy-to-use progress bar tool for python.
+An easy-to-use and colorful progress bar for python.
 
 
 ## Installation
@@ -36,7 +36,7 @@ Use `probar` or `bar` for different situations:
   from pyprobar import bar, probar
   import time
   
-  for idx, x in probar(range(1234), enum=True): # `enum` default is True
+  for idx, x in probar(range(1234), enum=True): 
       time.sleep(0.02)
   ```
   ```bash
@@ -45,7 +45,7 @@ Use `probar` or `bar` for different situations:
 Or  used in  List comprehensions:
 
 ```python
-res = [i for i in probar(range(10), enum=False)]
+res = [i for i in probar(range(10))]
 print(res)
 ```
 
@@ -75,7 +75,7 @@ print(res)
 You can set your own progress bar by using the parameters `symbol_1` and `symbol_2` :
 
 ```python
-for idx, i in probar(range(1234), symbol_2="o"):
+for i in probar(range(1234), symbol_2="o"):
     time.sleep(0.01)
 ```
 ```bash
