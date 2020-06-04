@@ -18,7 +18,7 @@ def test_probar2():
     print(res)
 
 def test_probar3():
-    for idx, i in probar(range(1234), symbol_2="o"):
+    for i in probar(range(1234), symbol_2="o"):
         time.sleep(0.01)
 
 def test_custom_color():
