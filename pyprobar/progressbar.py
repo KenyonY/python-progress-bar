@@ -135,7 +135,7 @@ class IntegProgress(Progress):
 
 
 class probar(IntegProgress):
-    """Simple progress bar display, to instead of tqdm.
+    """Colorful progress bar.
 
     :arg color: options  'const_random', 'update_random', '0','1','2',...,'n?'
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
@@ -143,7 +143,7 @@ class probar(IntegProgress):
 
     def __init__(self, iterable, total_steps=None, symbol_1="█", symbol_2='>',
                  color='const_random',N_colors=4,
-                 enum = True,
+                 enum = False,
                  terminal=False):
         self.iterable = iterable
         self.t0 = time.time()
@@ -208,7 +208,7 @@ def bar(index, total_size,
         symbol_1="█", symbol_2='>',
         text='',
         terminal=True):
-    """Simple progress bar display, to instead of tqdm.
+    """Colorful progress bar.
 
     :arg color: options  'constant_random', 'update_random', '0','1','2',...,'n?',
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
@@ -248,6 +248,3 @@ def bar(index, total_size,
     if _index == total_size:
         print('\n')
 
-
-if __name__ == "__main__":
-    pass
