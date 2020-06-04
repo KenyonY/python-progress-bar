@@ -30,16 +30,34 @@ pip install pyprobar
 
 Use `probar` or `bar` for different situations:
 
+`probar`:
+
   ```python
   from pyprobar import bar, probar
   import time
   
-  for idx, x in probar(range(1234)):
+  for idx, x in probar(range(1234), enum=True): # `enum` default is True
       time.sleep(0.02)
   ```
   ```bash
   >>> 18.31%|█████>>>>>                  | 0:00:20|0:00:25  ETC: 05-20 19:00:39
   ```
+Or  used in  List comprehensions:
+
+```python
+res = [i for i in probar(range(10), enum=False)]
+print(res)
+```
+
+```bash
+>>> 100.00%|███████████████████████████| 0:00:00|0:00:00 ETC: 05-20 12:14:33
+>>> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
+
+
+
+`bar`:
+
   ```python
   import numpy as np
   N = 1024
