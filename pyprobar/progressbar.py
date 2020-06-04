@@ -143,6 +143,7 @@ class probar(IntegProgress):
 
     def __init__(self, iterable, total_steps=None, symbol_1="█", symbol_2='>',
                  color='const_random',N_colors=4,
+                 enum = True,
                  terminal=False):
         self.iterable = iterable
         self.t0 = time.time()
@@ -151,6 +152,7 @@ class probar(IntegProgress):
         self.terminal = terminal
         self.color = color
         self.N_colors = N_colors
+        self.enum = enum
 
         if hasattr(iterable, '__len__'):
             self.total_steps = len(iterable)
@@ -163,7 +165,10 @@ class probar(IntegProgress):
         for idx, i in enumerate(self.iterable):
             self.appearance(idx, self.total_steps, self.symbol_1, self.symbol_2,
                             self.t0, self.color, self.N_colors, self.terminal)
-            yield idx, i
+            if self.enum:
+                yield idx, i
+            else:
+                yield i
 
 class SepaProgress(Progress):
     def current_bar(self, percent, symbol_1="█", symbol_2='>'):
@@ -245,18 +250,4 @@ def bar(index, total_size,
 
 
 if __name__ == "__main__":
-    # R,G,B = 255,0,0
-    # s1 = rgb_str("I'm red", [R,G,B])
-    s2 = rgb_str("I'm green", [0, 255, 0])
-    # print(s1, s2)
-    color = [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
-    for idx, i in enumerate(range(1234)):
-        bar(idx, 1234, text=s2,color='update_random')
-        time.sleep(0.005)
-
-    # for idx, i in probar(range(1234)):
-    #     time.sleep(0.0061)
-
-
-
-
+    pass
