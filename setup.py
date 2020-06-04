@@ -17,7 +17,7 @@ setup(
        version=pyprobar.__version__,
        packages = find_packages(),
        include_package_data = True,
-       description = " An easy-to-use progress bar tool for python." ,
+       description = " An easy-to-use and colorful progress bar for python." ,
 
        long_description=long_description,
        long_description_content_type="text/markdown",
@@ -38,7 +38,7 @@ setup(
        "Programming Language :: Python :: 3.7",
        ],
        keywords=[
-          'Deep Learning',
+          'Python Utils',
           'Machine Learning',
           'Neural Networks',
           'Natural Language Processing',
