@@ -17,7 +17,16 @@ An easy-to-use and colorful progress bar for python.
 pip install pyprobar
 ```
 
+nightly version:
+
+```bash
+python night_workflow.py
+```
+
+
+
 ## Synopsis
+
 ```bash
 28.71% |████████>>>>>>>>>>>>>>>>>  | 0:00:22|0:00:31 ETC: 05-20 18:08:15
 ```

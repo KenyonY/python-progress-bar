@@ -6,6 +6,9 @@ import random
 from pyprobar.styleString import setRGB, rgb_str, OFF, rgb_dict
 from pyprobar.cursor import Cursor
 import numpy as np
+from threading import Thread
+from queue import Queue
+from collections import deque
 
 cursor = Cursor()
 
@@ -115,36 +118,64 @@ class IntegProgress(Progress):
     def appearance(self, idx, total_steps, symbol_1, symbol_2, t0, color, N_colors,terminal):
         counts = idx + 1
         percent = counts / total_steps
-        PERCENT = percent * 100
+
         if idx == 0:
             print(f"\r{0:.2f}% \t  {0:.1f}|{float('inf'):.1f}s{cursor.EraseLine(0)}", end='', flush=True)
-            self.d_percent = 0.01
         else:
-            if PERCENT >= self.d_percent:
-                self.d_percent += 0.01
-                SIGN, N1 = self.current_bar(percent, symbol_1, symbol_2)
-                _PERCENT, _REMAIN , _ETC = self.currentProgress(percent, t0, terminal)
-                color_percent, color_bar, color_etc, color_etc2 = sepabar.get_bar_color(N1, color, N_colors=N_colors)
-                # color_percent,color_bar, color_etc, color_etc2 = setRGB(rgb_dict["灰色"]),setRGB(rgb_dict["粉色"]),
-                # setRGB(rgb_dict["浅绿"]), setRGB(rgb_dict["天蓝"])
-                print('\r' + color_percent + f"{_PERCENT}" + color_bar + SIGN + \
-                      color_etc  + _REMAIN + color_etc2 + _ETC + OFF + cursor.EraseLine(0), end='',
-                      flush=True)
+
+            SIGN, N1 = self.current_bar(percent, symbol_1, symbol_2)
+            _PERCENT, _REMAIN , _ETC = self.currentProgress(percent, t0, terminal)
+            color_percent, color_bar, color_etc, color_etc2 = sepabar.get_bar_color(N1, color, N_colors=N_colors)
+            # color_percent,color_bar, color_etc, color_etc2 = setRGB(rgb_dict["灰色"]),setRGB(rgb_dict["粉色"]),
+            # setRGB(rgb_dict["浅绿"]), setRGB(rgb_dict["天蓝"])
+            print('\r' + color_percent + f"{_PERCENT}" + color_bar + SIGN + \
+                  color_etc  + _REMAIN + color_etc2 + _ETC + OFF + cursor.EraseLine(0), end='',
+                  flush=True)
         if counts == total_steps:
             print('\n')
 
+
+class ThreadBar(Thread, IntegProgress):
+    def __init__(self, queue, N, time_interval, symbol_1, symbol_2,
+                            t0, color, N_colors, terminal):
+        super().__init__()
+        self.queue = queue
+        self.stop = False
+        self.N = N
+        self.time_interval = time_interval
+        self.symbol_1=symbol_1
+        self.symbol_2=symbol_2
+        self.t0=t0
+        self.color=color
+        self.N_colors=N_colors
+        self.terminal=terminal
+
+    def run(self):
+        while not self.stop:
+            # idx = self.queue.get()
+            idx = self.queue[0]
+            self.appearance(idx, self.N, self.symbol_1, self.symbol_2,
+                            self.t0, self.color, self.N_colors, self.terminal)
+            time.sleep(self.time_interval)
+            if idx == self.N-1:
+                self.stop = True
 
 class probar(IntegProgress):
     """Colorful progress bar.
 
     :arg color: options  'const_random', 'update_random', '0','1','2',...,'n?'
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
+    :arg enum: enumerate mode
+    :arg time_interval: Progress bar refresh interval
     """
 
     def __init__(self, iterable, total_steps=None, symbol_1="█", symbol_2='>',
                  color='const_random',N_colors=4,
                  enum = False,
-                 terminal=False):
+                 time_interval=0.02,
+                 terminal=False,
+                 ):
+
         self.iterable = iterable
         self.t0 = time.time()
         self.symbol_1 = symbol_1
@@ -161,14 +192,20 @@ class probar(IntegProgress):
             if self.total_steps == None:
                 raise ValueError(f'{iterable} has no __len__ attr, use total_steps param')
 
+        # self.q = Queue(2)
+        self.q = deque(maxlen=1)
+        self.q.append(0)
+        threadbar = ThreadBar(self.q, self.total_steps, time_interval,
+                              self.symbol_1, self.symbol_2,
+                              self.t0, self.color, self.N_colors, self.terminal)
+        threadbar.start()
+
+
     def __iter__(self):
         for idx, i in enumerate(self.iterable):
-            self.appearance(idx, self.total_steps, self.symbol_1, self.symbol_2,
-                            self.t0, self.color, self.N_colors, self.terminal)
-            if self.enum:
-                yield idx, i
-            else:
-                yield i
+            self.q.append(idx)
+            item = (idx, i) if self.enum else i
+            yield item
 
 class SepaProgress(Progress):
     def current_bar(self, percent, symbol_1="█", symbol_2='>'):
@@ -248,3 +285,13 @@ def bar(index, total_size,
     if _index == total_size:
         print('\n')
 
+if __name__ == "__main__":
+    from tqdm import tqdm
+    def test_probar1():
+        N = 100000000
+        for i in probar(range(N), time_interval=0.1):
+            pass
+        # for i in tqdm(range(N)):
+        #     pass
+
+    test_probar1()
