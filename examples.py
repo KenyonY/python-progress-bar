@@ -9,6 +9,16 @@ s2 = rgb_str("I'm green", [0, 255, 0])
 def test_rgb_string():
     print(s1, s2)
 
+def test_performance():
+    from tqdm import tqdm
+    N = 10000000
+    print("probar:")
+    for i in probar(range(N)):
+        pass
+    print("tqdm:")
+    for i in tqdm(range(N)):
+        pass
+test_performance()
 def test_probar1():
     for idx, i in probar(range(1234), enum=True):
         time.sleep(0.0061)

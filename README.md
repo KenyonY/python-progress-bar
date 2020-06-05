@@ -35,6 +35,30 @@ python night_workflow.py
 
 <img src="picture/color=5.gif" />
 
+## Performance
+
+```python
+from pyprobar import probar
+from tqdm import tqdm
+
+N = 100000000
+print("probar")
+for i in probar(range(N)):
+    pass
+print("tqdm")
+for i in tqdm(range(N)):
+    pass
+```
+
+```bash
+probar
+100.00%|█████████████████████████████| 0:00:00|0:00:23  ETC: 06-05 13:30:56
+tqdm
+100%|██████████| 100000000/100000000 [00:26<00:00, 3802766.45it/s]
+```
+
+
+
 ## Usage
 
 Use `probar` or `bar` for different situations:

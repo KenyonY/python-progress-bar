@@ -136,10 +136,10 @@ class IntegProgress(Progress):
 
 
 class ThreadBar(Thread, IntegProgress):
-    def __init__(self, queue, N, time_interval, symbol_1, symbol_2,
+    def __init__(self, deq, N, time_interval, symbol_1, symbol_2,
                             t0, color, N_colors, terminal):
         super().__init__()
-        self.queue = queue
+        self.deq = deq
         self.stop = False
         self.N = N
         self.time_interval = time_interval
@@ -153,7 +153,7 @@ class ThreadBar(Thread, IntegProgress):
     def run(self):
         while not self.stop:
             # idx = self.queue.get()
-            idx = self.queue[0]
+            idx = self.deq[0]
             self.appearance(idx, self.N, self.symbol_1, self.symbol_2,
                             self.t0, self.color, self.N_colors, self.terminal)
             time.sleep(self.time_interval)
@@ -195,10 +195,10 @@ class probar(IntegProgress):
         # self.q = Queue(2)
         self.q = deque(maxlen=1)
         self.q.append(0)
-        threadbar = ThreadBar(self.q, self.total_steps, time_interval,
+        self.threadbar = ThreadBar(self.q, self.total_steps, time_interval,
                               self.symbol_1, self.symbol_2,
                               self.t0, self.color, self.N_colors, self.terminal)
-        threadbar.start()
+        self.threadbar.start()
 
 
     def __iter__(self):
@@ -206,6 +206,7 @@ class probar(IntegProgress):
             self.q.append(idx)
             item = (idx, i) if self.enum else i
             yield item
+        self.threadbar.join()
 
 class SepaProgress(Progress):
     def current_bar(self, percent, symbol_1="█", symbol_2='>'):
@@ -286,12 +287,5 @@ def bar(index, total_size,
         print('\n')
 
 if __name__ == "__main__":
-    from tqdm import tqdm
-    def test_probar1():
-        N = 100000000
-        for i in probar(range(N), time_interval=0.1):
-            pass
-        # for i in tqdm(range(N)):
-        #     pass
+    pass
 
-    test_probar1()
