@@ -41,20 +41,25 @@ python night_workflow.py
 from pyprobar import probar
 from tqdm import tqdm
 
-N = 100000000
-print("probar")
+N = 20000000
+print("probar:")
 for i in probar(range(N)):
     pass
-print("tqdm")
+print("bar:")
+for idx,i in probar(range(N)):
+	bar(idx, N)
+print("tqdm:")
 for i in tqdm(range(N)):
     pass
 ```
 
 ```bash
-probar
-100.00%|█████████████████████████████| 0:00:00|0:00:23  ETC: 06-05 13:30:56
-tqdm
-100%|██████████| 100000000/100000000 [00:26<00:00, 3802766.45it/s]
+probar:
+100.00%|█████████████████████████████| 0:00:00|0:00:04  ETC: 06-06 02:13:52
+bar:
+100.00% |█████████████████████████████| 0:00:00|0:00:09  ETC: 06-06 02:14:02  
+tqdm:
+100%|██████████| 20000000/20000000 [00:06<00:00, 3175107.63it/s]
 ```
 
 
