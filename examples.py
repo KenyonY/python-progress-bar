@@ -11,14 +11,21 @@ def test_rgb_string():
 
 def test_performance():
     from tqdm import tqdm
-    N = 10000000
+    N = 20000000
     print("probar:")
-    for i in probar(range(N)):
+    for i in probar(range(N), color='1', time_interval=0.02):
         pass
+
+    print('bar:')
+    for idx, i in enumerate(range(N)):
+        bar(idx, N, text=f'')
+
     print("tqdm:")
     for i in tqdm(range(N)):
         pass
+
 test_performance()
+
 def test_probar1():
     for idx, i in probar(range(1234), enum=True):
         time.sleep(0.0061)
@@ -37,3 +44,7 @@ def test_custom_color():
     for idx, i in enumerate(range(1234)):
         bar(idx, 1234, text=s2, color=color)
         time.sleep(0.005)
+
+
+
+

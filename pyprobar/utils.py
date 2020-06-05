@@ -65,3 +65,6 @@ def dict_dotable(dic):
         if type(dic[i]) == dict:
             dic[i] = dict_dotable(dic[i])
     return dic
+
+
+
