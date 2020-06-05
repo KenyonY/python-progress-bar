@@ -1,4 +1,5 @@
-import sys
+# import sys
+# from queue import Queue
 import time, datetime
 from datetime import timedelta
 import abc
@@ -7,8 +8,8 @@ from pyprobar.styleString import setRGB, rgb_str, OFF, rgb_dict
 from pyprobar.cursor import Cursor
 import numpy as np
 from threading import Thread
-from queue import Queue
 from collections import deque
+
 
 cursor = Cursor()
 
@@ -132,7 +133,7 @@ class IntegProgress(Progress):
                   color_etc  + _REMAIN + color_etc2 + _ETC + OFF + cursor.EraseLine(0), end='',
                   flush=True)
         if counts == total_steps:
-            print('\n')
+            print('')
 
 
 class ThreadBar(Thread, IntegProgress):
@@ -167,14 +168,23 @@ class probar(IntegProgress):
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
     :arg enum: enumerate mode
     :arg time_interval: Progress bar refresh interval
+
+    Examples
+    --------
+    >>> for i in probar(range(10)):
+    >>>     ...
+
+    >>> for idx, i in probar(range(10), enum=True):
+    >>>     ...
+
+    >>> res  = [i for i in probar(range(10))]
     """
 
     def __init__(self, iterable, total_steps=None, symbol_1="█", symbol_2='>',
                  color='const_random',N_colors=4,
                  enum = False,
                  time_interval=0.02,
-                 terminal=False,
-                 ):
+                 terminal=False):
 
         self.iterable = iterable
         self.t0 = time.time()
@@ -198,8 +208,9 @@ class probar(IntegProgress):
         self.threadbar = ThreadBar(self.q, self.total_steps, time_interval,
                               self.symbol_1, self.symbol_2,
                               self.t0, self.color, self.N_colors, self.terminal)
-        self.threadbar.start()
 
+        self.threadbar.setDaemon(True)
+        self.threadbar.start()
 
     def __iter__(self):
         for idx, i in enumerate(self.iterable):
@@ -207,6 +218,8 @@ class probar(IntegProgress):
             item = (idx, i) if self.enum else i
             yield item
         self.threadbar.join()
+
+
 
 class SepaProgress(Progress):
     def current_bar(self, percent, symbol_1="█", symbol_2='>'):
@@ -236,19 +249,65 @@ class SepaProgress(Progress):
         _ETC = f" ETC: {(datetime.datetime.now() + remain_time).strftime('%m-%d %H:%M:%S')}"
         return _PERCENT, _REMAIN , _ETC
 
-    def appearance(self):
-        pass
+    def appearance(self, _index, total_size,
+                   color='const_random',
+                   symbol_1="█", symbol_2='>',
+                   text='',
+                   terminal=True):
+
+        percent = (_index) / total_size
+        SIGN, N1 = self.current_bar(percent, symbol_1, symbol_2)
+        PERCENT, ETC_1, ETC_2 = self.currentProgress(percent, t0, terminal)
+        color_percent, color_bar, color_etc, color_etc2 = self.get_bar_color(N1, color, N_colors=4)
+        if text != '': text += "|"
+        print(f"\r{text}{color_percent}{PERCENT} {color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF} {cursor.EraseLine(0)}",
+            end='', flush=True)
+
+class _thread_bar(Thread, SepaProgress):
+    def __init__(self, deq, N, time_interval,
+                 symbol_1, symbol_2,
+                 color, text, terminal):
+
+        super().__init__()
+        self.deq = deq
+        self.N = N
+        self.time_interval = time_interval
+        self.symbol_1=symbol_1
+        self.symbol_2=symbol_2
+        self.color=color
+        self.terminal=terminal
+        self.q_flag = 0 if text=='' else 1
+
+    def run(self):
+        while True:
+            if self.q_flag == 1:
+                idx = self.deq[0][0]
+                text = self.deq[0][1]
+            else:
+                idx = self.deq[0]
+                text = ''
+
+            self.appearance(idx, self.N, self.color,
+                            self.symbol_1, self.symbol_2,
+                            text,
+                            self.terminal)
+
+            time.sleep(self.time_interval)
+
+            if idx == self.N:
+                break
 
 
 sepabar = SepaProgress()
-def bar(index, total_size,
+q = deque(maxlen=1)
+def bar(index, total_steps,time_interval=0.02,
         color='const_random',
         symbol_1="█", symbol_2='>',
         text='',
         terminal=True):
     """Colorful progress bar.
 
-    :arg color: options  'constant_random', 'update_random', '0','1','2',...,'n?',
+    :arg color: options  'constant_random', '0','1','2',...,'n?',
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
 
     Examples
@@ -271,20 +330,25 @@ def bar(index, total_size,
     >>>     bar(idx, N,color = [[146,52,247],[250,205,229],[66,227,35],[214,126,209]])
     >>>     ...
     """
-    global t0
+    global t0, threadbar
     _index = index + 1
+    if text == '':
+        q.append(_index)
+    else:
+        q.append((_index, text))
+
     if index == 0:
         t0 = time.time()
-        index = 1
-    percent = (_index)/total_size
-    SIGN, N1 = sepabar.current_bar(percent, symbol_1, symbol_2)
-    PERCENT, ETC_1 , ETC_2 = sepabar.currentProgress(percent, t0, terminal)
-    color_percent, color_bar, color_etc, color_etc2 = sepabar.get_bar_color(N1, color, N_colors=4)
-    if text != '': text += " |"
-    print(f"\r{text}{color_percent}{PERCENT} {color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF} {cursor.EraseLine(0)}",
-          end='', flush=True)
-    if _index == total_size:
-        print('\n')
+        threadbar = _thread_bar(q, total_steps, time_interval,
+                                symbol_1, symbol_2,
+                                color, text, terminal)
+        threadbar.setDaemon(True)
+        threadbar.start()
+
+    if _index == total_steps:
+        threadbar.join()
+        print('')
+
 
 if __name__ == "__main__":
     pass
