@@ -7,7 +7,7 @@ class probar():
     """Colorful progress bar.
 
     :arg color: options  'const_random', 'update_random', '0','1','2',...,'n?'
-        or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
+        or a RGB list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
     :arg enum: enumerate mode
     :arg time_interval: Progress bar refresh interval
 
@@ -71,7 +71,7 @@ def bar(index, total_steps,time_interval=0.02,
         terminal=True):
     """Colorful progress bar.
 
-    :arg color: options  'constant_random', '0','1','2',...,'n?',
+    :arg color: options  'const_random', 'update_random','0','1','2',...,'n?',
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
 
     Examples
@@ -94,7 +94,7 @@ def bar(index, total_steps,time_interval=0.02,
     >>>     bar(idx, N,color = [[146,52,247],[250,205,229],[66,227,35],[214,126,209]])
     >>>     ...
     """
-    global threadbar, q
+    global threadbar
     _index = index + 1
     if text == '':
         q.append(_index)
@@ -109,7 +109,7 @@ def bar(index, total_steps,time_interval=0.02,
         threadbar.setDaemon(True)
         threadbar.start()
 
-    if _index == total_steps:
+    elif _index == total_steps:
         threadbar.join()
         print('')
 
