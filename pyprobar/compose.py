@@ -89,7 +89,7 @@ class Progress(metaclass=abc.ABCMeta):
         elif type(color).__name__ == "list" or type(color).__name__ == "tuple":
             color = np.array(color)
             rows, cols = color.reshape(-1, 3).shape
-            # 如果只指定一个颜色，则这个颜色给bar
+            # If specify only one color, that color is given to bar
             if rows == 1:
                 self.COLOR_bar[1] = setRGB(color)
                 return self.COLOR_bar
@@ -110,7 +110,6 @@ class IntegProgress(Progress):
     def appearance(self, idx, total_steps, symbol_1, symbol_2, t0, color, N_colors,terminal):
         counts = idx + 1
         percent = counts / total_steps
-
         if idx == 0:
             print(f"\r{0:.2f}% \t  {0:.1f}|{float('inf'):.1f}s{cursor.EraseLine(0)}", end='', flush=True)
         else:
@@ -166,7 +165,7 @@ class SepaProgress(Progress):
         PERCENT, ETC_1, ETC_2 = self.currentProgress(percent, t0, terminal)
         color_percent, color_bar, color_etc, color_etc2 = self.get_bar_color(N1, color, N_colors=4)
         if text != '': text += "|"
-        print(f"\r{text}{color_percent}{PERCENT}{color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF} {cursor.EraseLine(0)}",
+        print(f"\r{text}{color_percent}{PERCENT}{color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2}{OFF}{cursor.EraseLine(0)}",
             end='', flush=True)
 
 
@@ -177,13 +176,14 @@ class _Thread_bar(Thread, SepaProgress):
 
         super().__init__()
         self.deq = deq
+        self.t0 = t0
         self.N = N
         self.time_interval = time_interval
         self.symbol_1=symbol_1
         self.symbol_2=symbol_2
         self.color=color
         self.terminal=terminal
-        self.q_flag = 1 if type(self.deq[0]) == tuple else 0
+        self.q_flag = 1 if isinstance(self.deq[0],tuple) else 0
 
     def run(self):
         while True:
@@ -197,7 +197,8 @@ class _Thread_bar(Thread, SepaProgress):
             self.appearance(idx, self.N, self.color,
                             self.symbol_1, self.symbol_2,
                             text,
-                            self.terminal)
+                            self.terminal,
+                            self.t0)
             time.sleep(self.time_interval)
             if idx == self.N:
                 break
