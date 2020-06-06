@@ -18,7 +18,7 @@ def test_performance():
 
     print('bar:')
     for idx, i in enumerate(range(N)):
-        bar(idx, N, text=f'{idx+1}')
+        bar(idx, N, text=f'{idx+1}', color='5')
 
     print("tqdm:")
     for i in tqdm(range(N)):
