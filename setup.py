@@ -28,14 +28,15 @@ setup(
 
        install_requires=install_requires,
        classifiers=[
-	     'Operating System :: OS Independent',
-	     'Intended Audience :: Developers',
-	     'Intended Audience :: Science/Research',
-	     'Topic :: Scientific/Engineering :: Artificial Intelligence',
-       "Programming Language :: Python :: 3",
-       "Programming Language :: Python :: 3.5",
-       "Programming Language :: Python :: 3.6",
-       "Programming Language :: Python :: 3.7",
+                    'Operating System :: OS Independent',
+                    'Intended Audience :: Developers',
+                    'Intended Audience :: Science/Research',
+                    'Topic :: Scientific/Engineering :: Artificial Intelligence',
+                    "Programming Language :: Python :: 3",
+                    "Programming Language :: Python :: 3.5",
+                    "Programming Language :: Python :: 3.6",
+                    "Programming Language :: Python :: 3.7",
+                    "Programming Language :: Python :: 3.8",
        ],
        keywords=[
           'Python Utils',

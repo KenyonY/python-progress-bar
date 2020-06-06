@@ -1,5 +1,5 @@
 import abc
-from pyprobar.styleString import setRGB, CSI, OFF, rgb_str
+from .styleString import setRGB, CSI, OFF, rgb_str
 import sys
 
 class BaseCursor(metaclass=abc.ABCMeta):
@@ -70,7 +70,7 @@ class Cursor(BaseCursor):
         """Moves the cursor n (default 1) cells in the given direction."""
         return csi(n, 'D')
     def NextLINE(self,n=1):
-        return csi(n, "E")
+        return csi(n, 'E')
     def PreLINE(self, n=1):
         """Moves cursor to beginning of the line n (default 1) lines up.
         No any character are cleared.
@@ -93,7 +93,7 @@ class Cursor(BaseCursor):
         If n is 2, clear entire line. Cursor position does not change.
         """
         if n == 0:
-            return CSI + "K"
+            return CSI + 'K'
         else:
             return csi(n, 'K')
 
@@ -104,7 +104,7 @@ class Cursor(BaseCursor):
         If n is 2, clear entire screen (and moves cursor to upper left on DOS ANSI.SYS). 
         If n is 3, clear entire screen and delete all lines saved in the scrollback buffer.
         """
-        return csi(n, "J")
+        return csi(n, 'J')
 
     def ScrollUp(self, n=1):
         """Scroll whole page up by n (default 1) lines.

@@ -1,6 +1,6 @@
 # Pyprobar
 
-[![image](https://img.shields.io/badge/Pypi-0.1.1.5-green.svg)](https://pypi.org/project/pyprobar)
+[![image](https://img.shields.io/badge/Pypi-0.1.1.7-green.svg)](https://pypi.org/project/pyprobar)
 [![image](https://img.shields.io/badge/python-3.6+-blue.svg)](https://www.python.org/)
 [![image](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![image](https://img.shields.io/badge/author-K.y-orange.svg?style=flat-square&logo=appveyor)](https://github.com/beidongjiedeguang)
@@ -17,7 +17,16 @@ An easy-to-use and colorful progress bar for python.
 pip install pyprobar
 ```
 
+nightly version:
+
+```bash
+python setup.py install
+```
+
+
+
 ## Synopsis
+
 ```bash
 28.71% |████████>>>>>>>>>>>>>>>>>  | 0:00:22|0:00:31 ETC: 05-20 18:08:15
 ```
@@ -25,6 +34,35 @@ pip install pyprobar
 <img src="picture/color=1.gif" />
 
 <img src="picture/color=5.gif" />
+
+## Performance
+
+```python
+from pyprobar import probar
+from tqdm import tqdm
+
+N = 20000000
+print("probar:")
+for i in probar(range(N)):
+    pass
+print("bar:")
+for idx,i in probar(range(N)):
+	bar(idx, N)
+print("tqdm:")
+for i in tqdm(range(N)):
+    pass
+```
+
+```bash
+probar:
+100.00%|█████████████████████████████| 0:00:00|0:00:04  ETC: 06-06 02:13:52
+bar:
+100.00% |█████████████████████████████| 0:00:00|0:00:09  ETC: 06-06 02:14:02  
+tqdm:
+100%|██████████| 20000000/20000000 [00:06<00:00, 3175107.63it/s]
+```
+
+
 
 ## Usage
 
