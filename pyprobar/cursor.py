@@ -1,5 +1,5 @@
 import abc
-from pyprobar.styleString import setRGB, CSI, OFF, rgb_str
+from .styleString import setRGB, CSI, OFF, rgb_str
 import sys
 
 class BaseCursor(metaclass=abc.ABCMeta):

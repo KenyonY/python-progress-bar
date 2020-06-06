@@ -9,8 +9,6 @@ from pyprobar.cursor import Cursor
 import numpy as np
 from threading import Thread
 
-
-
 cursor = Cursor()
 
 class Progress(metaclass=abc.ABCMeta):
@@ -18,17 +16,37 @@ class Progress(metaclass=abc.ABCMeta):
     total_space = 30
     COLOR_bar = None
 
-    @abc.abstractmethod
-    def currentProgress(self, *args, **kwargs):
-        pass
+    def currentProgress(self, percent, t0, terminal):
+        cost_time = time.time() - t0
+        total_time = cost_time / percent
+        PERCENT = percent * 100
+
+        remain_time = int(total_time - cost_time)
+        remain_time = timedelta(seconds=remain_time)
+        total_time = timedelta(seconds=int(total_time))
+        cost_time = timedelta(seconds=int(cost_time))
+
+        _PERCENT = f"{PERCENT: >6.2f}%"
+        _COST = f" {cost_time}|{total_time} "
+        _REMAIN = f" {remain_time}|{total_time} "
+        _ETC = f" ETC: {(datetime.datetime.now() + remain_time).strftime('%m-%d %H:%M:%S')}"
+        return _PERCENT, _REMAIN, _ETC
+
+    def current_bar(self, percent, symbol_1="█", symbol_2='>'):
+        """Get the appearance of current  bar"""
+
+        n_sign1, mod_sign1 = divmod(percent, self.unit_percent)
+        N1 = int(n_sign1)
+        sign1 = symbol_1 * N1
+        N0 = int((mod_sign1 / self.unit_percent) * (self.total_space - N1))
+
+        sign0 = symbol_2 * N0
+        SIGN = '|' + sign1 + sign0 + (self.total_space - N1 - N0 - 1) * ' ' + '|'
+        return SIGN, N1
 
     @abc.abstractmethod
     def appearance(self, *args, **kwargs):
         pass
-
-    @abc.abstractmethod
-    def current_bar(self, percent, symbol_1="█", symbol_2='>'):
-        """Get the appearance of current  bar"""
 
     @staticmethod
     def get_color(N_color, update=True, COLOR=[0]):
@@ -89,33 +107,6 @@ class Progress(metaclass=abc.ABCMeta):
             raise ValueError("Invalid input!")
 
 class IntegProgress(Progress):
-    def current_bar(self, percent, symbol_1="█", symbol_2='>'):
-        """Get the appearance of current  bar"""
-        n_sign1, mod_sign1 = divmod(percent, self.unit_percent)
-        N1 = int(n_sign1)
-        sign1 = symbol_1 * N1
-        N0 = int((mod_sign1 / self.unit_percent) * (self.total_space - N1))
-
-        sign0 = symbol_2 * N0
-        SIGN = '|' + sign1 + sign0 + (self.total_space - N1 - N0 - 1) * ' ' + '|'
-        return SIGN, N1
-
-    def currentProgress(self, percent, t0, terminal):
-        cost_time = time.time() - t0
-        total_time = cost_time / percent
-        PERCENT = percent * 100
-
-        remain_time = int(total_time - cost_time)
-        remain_time = timedelta(seconds=remain_time)
-        total_time = timedelta(seconds=int(total_time))
-        cost_time = timedelta(seconds=int(cost_time))
-
-        _PERCENT = f"{PERCENT: >6.2f}%"
-        _COST = f" {cost_time}|{total_time} "
-        _REMAIN = f" {remain_time}|{total_time} "
-        _ETC = f" ETC: {(datetime.datetime.now() + remain_time).strftime('%m-%d %H:%M:%S')}"
-        return _PERCENT, _REMAIN , _ETC
-
     def appearance(self, idx, total_steps, symbol_1, symbol_2, t0, color, N_colors,terminal):
         counts = idx + 1
         percent = counts / total_steps
@@ -163,33 +154,6 @@ class _Thread_probar(Thread, IntegProgress):
 
 
 class SepaProgress(Progress):
-    def current_bar(self, percent, symbol_1="█", symbol_2='>'):
-        """Get the appearance of current  bar"""
-        n_sign1, mod_sign1 = divmod(percent, self.unit_percent)
-        N1 = int(n_sign1)
-        sign1 = symbol_1 * N1
-        N0 = int((mod_sign1 / self.unit_percent) * (self.total_space - N1))
-
-        sign0 = symbol_2 * N0
-        SIGN = '|' + sign1 + sign0 + (self.total_space - N1 - N0 - 1) * ' ' + '|'
-        return SIGN, N1
-
-    def currentProgress(self, percent, t0, terminal):
-        cost_time = time.time() - t0
-        total_time = cost_time / percent
-        PERCENT = percent * 100
-
-        remain_time = int(total_time - cost_time)
-        remain_time = timedelta(seconds=remain_time)
-        total_time = timedelta(seconds=int(total_time))
-        cost_time = timedelta(seconds=int(cost_time))
-
-        _PERCENT = f"{PERCENT: >6.2f}%"
-        _COST = f" {cost_time}|{total_time} "
-        _REMAIN = f" {remain_time}|{total_time} "
-        _ETC = f" ETC: {(datetime.datetime.now() + remain_time).strftime('%m-%d %H:%M:%S')}"
-        return _PERCENT, _REMAIN , _ETC
-
     def appearance(self, idx, total_size,
                    color='const_random',
                    symbol_1="█", symbol_2='>',
@@ -202,8 +166,9 @@ class SepaProgress(Progress):
         PERCENT, ETC_1, ETC_2 = self.currentProgress(percent, t0, terminal)
         color_percent, color_bar, color_etc, color_etc2 = self.get_bar_color(N1, color, N_colors=4)
         if text != '': text += "|"
-        print(f"\r{text}{color_percent}{PERCENT} {color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF} {cursor.EraseLine(0)}",
+        print(f"\r{text}{color_percent}{PERCENT}{color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2} {OFF} {cursor.EraseLine(0)}",
             end='', flush=True)
+
 
 class _Thread_bar(Thread, SepaProgress):
     def __init__(self, deq, N, time_interval,

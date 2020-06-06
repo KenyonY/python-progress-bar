@@ -1,9 +1,6 @@
 import os
 import pickle
 
-# config = {'name': 'pyprobar', 'version': 107}
-# save("pyprobar/version_config.pkl", config)
-
 def version_config(update=False):
     filename = os.path.join(os.path.dirname(__file__), 'version_config.yaml')
     config = yaml_load(filename)
