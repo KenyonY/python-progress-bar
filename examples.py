@@ -27,3 +27,16 @@ def test_custom_color():
     for idx, i in enumerate(range(1234)):
         bar(idx, 1234, text=s2, color=color)
         time.sleep(0.005)
+
+def test_performance():
+    from tqdm import tqdm
+    N = 200000000
+    # print("tqdm:")
+    # for i in tqdm(range(N)):
+    #     pass
+    print("probar")
+    for i in probar(range(N)):
+        pass
+
+    
+test_performance()
