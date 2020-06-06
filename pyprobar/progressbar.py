@@ -276,11 +276,12 @@ class _thread_bar(Thread, SepaProgress):
         self.symbol_2=symbol_2
         self.color=color
         self.terminal=terminal
-        self.q_flag = 0 if text=='' else 1
+        self.q_flag = 1 if type(self.deq[0]) == tuple else 0
 
     def run(self):
+
         while True:
-            if self.q_flag == 1:
+            if self.q_flag:
                 idx = self.deq[0][0]
                 text = self.deq[0][1]
             else:
