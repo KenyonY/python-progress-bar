@@ -23,6 +23,13 @@ pip install pyprobar
 python setup.py install
 ```
 
+### TODO
+
+- [ ] Thread problem in jupyter notebook
+- [ ] 
+
+
+
 
 
 ## Synopsis
@@ -52,7 +59,7 @@ for idx,i in probar(range(N)):
 print("tqdm:")
 for i in tqdm(range(N)):
     pass
-print("progressbar:")
+print("progressbar:")# progressbar2
 for i in progressbar.progressbar(range(N)):
     pass
 ```
