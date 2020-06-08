@@ -26,7 +26,8 @@ python setup.py install
 ### TODO
 
 - [ ] Thread problem in jupyter notebook
-- [ ] 
+- [ ] Speed of information
+- [ ] Multithreading
 
 
 
