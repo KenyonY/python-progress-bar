@@ -64,10 +64,11 @@ class probar():
 
 q = deque(maxlen=1)
 
-def bar(index, total_steps,time_interval=0.02,
+def bar(index, total_steps,
         color='const_random',
         symbol_1="█", symbol_2='>',
         text='',
+        time_interval=0.02,
         terminal=True):
     """Colorful progress bar.
 
