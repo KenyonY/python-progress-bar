@@ -12,7 +12,7 @@ workflow.py
 night_workflow.py
 generateREADME.py
 test*
-
+test/
 
 # pycharm
 .idea/

@@ -30,7 +30,7 @@ def test_custom_color():
 
 def test_performance():
     from tqdm import tqdm
-    N = 10000000
+    N = 3000000
     print("probar:")
     for i in probar(range(N), color='1', time_interval=0.02):
         pass

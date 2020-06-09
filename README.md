@@ -23,15 +23,6 @@ pip install pyprobar
 python setup.py install
 ```
 
-### TODO
-
-- [ ] Thread problem in jupyter notebook
-- [ ] Speed of information
-- [ ] Multithreading
-
-
-
-
 
 ## Synopsis
 
@@ -185,7 +176,11 @@ from pyprobar.styleString import rgb_str
 
 <img src="picture/rgb_str.jpg" />
 
+### TODO
 
+- [x] Thread problem in jupyter notebook
+- [ ] Speed of information
+- [ ] Multithreading
 
 
 
