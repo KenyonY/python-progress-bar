@@ -8,6 +8,9 @@ from pyprobar.styleString import setRGB, rgb_str, OFF, rgb_dict
 from pyprobar.cursor import Cursor
 import numpy as np
 from threading import Thread
+import inspect
+import ctypes
+
 
 cursor = Cursor()
 
@@ -122,8 +125,6 @@ class IntegProgress(Progress):
             print('\r' + color_percent + f"{_PERCENT}" + color_bar + SIGN + \
                   color_etc  + _REMAIN + color_etc2 + _ETC + OFF + cursor.EraseLine(0), end='',
                   flush=True)
-        if counts == total_steps:
-            print('')
 
 
 class _Thread_probar(Thread, IntegProgress):
@@ -202,4 +203,18 @@ class _Thread_bar(Thread, SepaProgress):
             time.sleep(self.time_interval)
             if idx == self.N:
                 break
+
+def _async_raise(tid, exctype):
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
 

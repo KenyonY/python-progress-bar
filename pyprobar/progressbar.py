@@ -1,5 +1,5 @@
 from collections import deque
-from .compose import _Thread_probar, _Thread_bar
+from .compose import _Thread_probar, _Thread_bar, stop_thread
 import time
 
 
@@ -36,13 +36,8 @@ class probar():
         self.color = color
         self.N_colors = N_colors
         self.enum = enum
+        self.total_steps = len(iterable) if total_steps is None else total_steps
 
-        if hasattr(iterable, '__len__'):
-            self.total_steps = len(iterable)
-        else:
-            self.total_steps = total_steps
-            if self.total_steps == None:
-                raise ValueError(f'{iterable} has no __len__ attr, use total_steps param')
 
         # self.q = Queue(2)
         self.q = deque(maxlen=1)
@@ -51,25 +46,41 @@ class probar():
                               self.symbol_1, self.symbol_2,
                               self.t0, self.color, self.N_colors, self.terminal)
 
-        self.threadbar.setDaemon(True)
+        # self.threadbar.setDaemon(True)
         self.threadbar.start()
+        self.isInterrupt = True
 
     def __iter__(self):
-        for idx, i in enumerate(self.iterable):
-            self.q.append(idx)
-            item = (idx, i) if self.enum else i
-            yield item
-        self.threadbar.join()
+        try:
+            for idx, i in enumerate(self.iterable):
+                self.q.append(idx)
+                item = (idx, i) if self.enum else i
+                yield item
+            self.threadbar.join()
+            self.isInterrupt = False
+        finally:
+            print('')
+            if self.isInterrupt: stop_thread(self.threadbar)
 
 
-q = deque(maxlen=1)
+def trydecorator(func):
+    def wrap(*args, **kwargs):
+        global threadbar
+        try:
+            func(*args, **kwargs)
+        except KeyboardInterrupt:
+            stop_thread(threadbar)
+            raise
+    return wrap
 
+@trydecorator
 def bar(index, total_steps,
         color='const_random',
         symbol_1="█", symbol_2='>',
         text='',
         time_interval=0.02,
-        terminal=True):
+        terminal=True,
+        q = deque(maxlen=1)):
     """Colorful progress bar.
 
     :arg color: options  'const_random', 'update_random','0','1','2',...,'n?',
@@ -97,6 +108,7 @@ def bar(index, total_steps,
     """
     global threadbar
     _index = index + 1
+
     if text == '':
         q.append(_index)
     else:
