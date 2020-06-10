@@ -1,5 +1,6 @@
 import os
 import pickle
+import shutil
 
 def version_config(update=False):
     filename = os.path.join(os.path.dirname(__file__), 'version_config.yaml')
@@ -63,5 +64,15 @@ def dict_dotable(dic):
             dic[i] = dict_dotable(dic[i])
     return dic
 
+def rm(path):
+    '''remove path
+    '''
+    if os.path.exists(path):
+        if os.path.isfile(path):
+            os.remove(path)
+        elif os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
+            print(f'{path} is  illegal !')
 
 
