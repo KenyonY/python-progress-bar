@@ -1,5 +1,5 @@
 from collections import deque
-from .compose import _Thread_probar, _Thread_bar, stop_thread
+from .compose import *
 import time
 
 
@@ -42,12 +42,12 @@ class probar():
         # self.q = Queue(2)
         self.q = deque(maxlen=1)
         self.q.append(0)
-        self.threadbar = _Thread_probar(self.q, self.total_steps, time_interval,
+        self.__threadbar = _Thread_probar(self.q, self.total_steps, time_interval,
                               self.symbol_1, self.symbol_2,
                               self.t0, self.color, self.N_colors, self.terminal)
 
-        # self.threadbar.setDaemon(True)
-        self.threadbar.start()
+        # self.__threadbar.setDaemon(True)
+        self.__threadbar.start()
         self.isInterrupt = True
 
     def __iter__(self):
@@ -56,24 +56,15 @@ class probar():
                 self.q.append(idx)
                 item = (idx, i) if self.enum else i
                 yield item
-            self.threadbar.join()
+            self.__threadbar.join()
             self.isInterrupt = False
         finally:
             print('')
-            if self.isInterrupt: stop_thread(self.threadbar)
+            if self.isInterrupt: stop_thread(self.__threadbar)
 
 
-def trydecorator(func):
-    def wrap(*args, **kwargs):
-        global threadbar
-        try:
-            func(*args, **kwargs)
-        except KeyboardInterrupt:
-            stop_thread(threadbar)
-            raise
-    return wrap
-
-@trydecorator
+__threadbar = None
+@trydecorator2(__threadname=__threadbar)
 def bar(index, total_steps,
         color='const_random',
         symbol_1="█", symbol_2='>',
@@ -106,7 +97,7 @@ def bar(index, total_steps,
     >>>     bar(idx, N,color = [[146,52,247],[250,205,229],[66,227,35],[214,126,209]])
     >>>     ...
     """
-    global threadbar
+    global __threadbar
     _index = index + 1
 
     if text == '':
@@ -116,14 +107,14 @@ def bar(index, total_steps,
 
     if index == 0:
         t0 = time.time()
-        threadbar = _Thread_bar(q, total_steps, time_interval,
+        __threadbar = _Thread_bar(q, total_steps, time_interval,
                                 symbol_1, symbol_2,
                                 color, text, terminal,t0)
-        threadbar.setDaemon(True)
-        threadbar.start()
+        __threadbar.setDaemon(True)
+        __threadbar.start()
 
     elif _index == total_steps:
-        threadbar.join()
+        __threadbar.join()
         print('')
 
 

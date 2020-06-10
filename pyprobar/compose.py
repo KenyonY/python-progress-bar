@@ -1,5 +1,3 @@
-# import sys
-# from queue import Queue
 import time, datetime
 from datetime import timedelta
 import abc
@@ -10,6 +8,9 @@ import numpy as np
 from threading import Thread
 import inspect
 import ctypes
+from functools import wraps, partial
+
+__all__ = ["_Thread_probar", "_Thread_bar", "stop_thread","trydecorator", "trydecorator2"]
 
 
 cursor = Cursor()
@@ -217,4 +218,29 @@ def _async_raise(tid, exctype):
 
 def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
+
+def trydecorator(__threadname=None):
+    def middle(func):
+        @wraps(func)
+        def wrap(*args, **kwargs):
+            try:
+                func(*args, **kwargs)
+            except KeyboardInterrupt:
+                stop_thread(__threadname)
+                raise
+        return wrap
+    return middle
+
+def trydecorator2(func=None, __threadname=None):
+    if func is None:
+        return partial(trydecorator2, __threadname=__threadname)
+    @wraps(func)
+    def wrap(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except KeyboardInterrupt:
+            stop_thread(__threadname)
+            raise
+    return wrap
+
 
