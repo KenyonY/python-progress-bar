@@ -34,27 +34,11 @@ python setup.py install
 
 <img src="picture/color=5.gif" />
 
+
+
 ## Performance
 
-```python
-from pyprobar import probar
-from tqdm import tqdm
-import progressbar
-
-N = 10000000
-print("probar:")
-for i in probar(range(N)):
-    pass
-print("bar:")
-for idx,i in probar(range(N)):
-	bar(idx, N)
-print("tqdm:")
-for i in tqdm(range(N)):
-    pass
-print("progressbar:")# progressbar2
-for i in progressbar.progressbar(range(N)):
-    pass
-```
+**For 10000000 loops:**
 
 ```bash
 probar:
@@ -88,7 +72,7 @@ Use `probar` or `bar` for different situations:
   ```bash
   >>> 18.31%|█████>>>>>                  | 0:00:20|0:00:25  ETC: 05-20 19:00:39
   ```
-Or  used in  List comprehensions:
+Or  used in  List comprehension:
 
 ```python
 res = [i for i in probar(range(10))]
