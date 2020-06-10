@@ -4,9 +4,9 @@ import time
 
 
 class probar():
-    """Colorful progress bar.
+    """Simple, easy to use, beautiful and fast progress bar.
 
-    :arg color: options  'const_random', 'update_random', '0','1','2',...,'n?'
+    :arg color: options  'const_random', '0','1','2',...,'5'
         or a RGB list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
     :arg enum: enumerate mode
     :arg time_interval: Progress bar refresh interval
@@ -72,9 +72,9 @@ def bar(index, total_steps,
         time_interval=0.02,
         terminal=True,
         q = deque(maxlen=1)):
-    """Colorful progress bar.
+    """Simple, easy to use, beautiful and fast progress bar.
 
-    :arg color: options  'const_random', 'update_random','0','1','2',...,'n?',
+    :arg color: options  'const_random', '0','1','2',...,'5',
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
 
     Examples
