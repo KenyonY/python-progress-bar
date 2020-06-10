@@ -8,7 +8,7 @@
 
 
 
-An easy-to-use and colorful progress bar for python.
+A beautiful , fast, easy-to-use  progress bar for python.
 
 
 ## Installation
@@ -17,12 +17,11 @@ An easy-to-use and colorful progress bar for python.
 pip install pyprobar
 ```
 
-nightly version:
+*nightly* version:
 
 ```bash
 python setup.py install
 ```
-
 
 
 ## Synopsis
@@ -40,8 +39,9 @@ python setup.py install
 ```python
 from pyprobar import probar
 from tqdm import tqdm
+import progressbar
 
-N = 20000000
+N = 10000000
 print("probar:")
 for i in probar(range(N)):
     pass
@@ -51,15 +51,23 @@ for idx,i in probar(range(N)):
 print("tqdm:")
 for i in tqdm(range(N)):
     pass
+print("progressbar:")# progressbar2
+for i in progressbar.progressbar(range(N)):
+    pass
 ```
 
 ```bash
 probar:
-100.00%|█████████████████████████████| 0:00:00|0:00:04  ETC: 06-06 02:13:52
+100.00%|█████████████████████████████| 0:00:00|0:00:02  ETC: 06-07 12:08:03
+
 bar:
-100.00% |█████████████████████████████| 0:00:00|0:00:09  ETC: 06-06 02:14:02  
+100.00%|█████████████████████████████| 0:00:00|0:00:03  ETC: 06-07 12:11:15
+
 tqdm:
-100%|██████████| 20000000/20000000 [00:06<00:00, 3175107.63it/s]
+100%|██████████| 10000000/10000000 [00:03<00:00, 2634907.84it/s]
+
+progressbar:
+100% (10000000 of 10000000) |############| Elapsed Time: 0:00:46 Time:  0:00:46
 ```
 
 
@@ -168,7 +176,11 @@ from pyprobar.styleString import rgb_str
 
 <img src="picture/rgb_str.jpg" />
 
+### TODO
 
+- [x] Thread problem in jupyter notebook
+- [ ] Speed of information
+- [ ] Multithreading
 
 
 

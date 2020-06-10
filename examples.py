@@ -30,11 +30,11 @@ def test_custom_color():
 
 def test_performance():
     from tqdm import tqdm
-    N = 10000000
+    N = 5000000
     print("probar:")
     for i in probar(range(N), color='1', time_interval=0.02):
         pass
-    time.sleep(0.5)
+    time.sleep(0.1)
     
     print('bar:')
     for idx, i in enumerate(range(N)):
