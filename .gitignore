@@ -9,7 +9,6 @@ data/
 
 # my workflow
 workflow.py
-night_workflow.py
 generateREADME.py
 test*
 test/
