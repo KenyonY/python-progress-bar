@@ -17,7 +17,7 @@ A beautiful , fast, easy-to-use  progress bar for python.
 pip install pyprobar
 ```
 
-*nightly* version:
+*nightly*  build:
 
 ```bash
 python setup.py install
@@ -148,6 +148,13 @@ for idx, i in enumerate(a):
 
 <img src="picture/multi_text.jpg" alt="multi_text" style="zoom:80%;" />
 
+Specify the time zone:
+
+```python
+for i in enumerate(a):
+    bar(idx, N, time_zone="Asia/Shanghai")
+```
+
 
 
 print RGB color string:
@@ -160,9 +167,12 @@ from pyprobar.styleString import rgb_str
 
 <img src=picture/rgb_str.jpg />
 
+
+
 ### TODO
 
-- [x] Thread problem in jupyter notebook
+- [x] Thread problem with probar()  in jupyter notebook
+- [ ] Thread  problem with `bar()`  in jupyter notebook
 - [ ] Speed of information
 - [ ] Multithreading
 
