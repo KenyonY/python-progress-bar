@@ -1,4 +1,5 @@
 import time, datetime
+import pendulum
 from datetime import timedelta
 import abc
 import random
@@ -6,21 +7,24 @@ from pyprobar.styleString import setRGB, rgb_str, OFF, rgb_dict
 from pyprobar.cursor import Cursor
 import numpy as np
 from threading import Thread
+import threading
 import inspect
 import ctypes
 from functools import wraps, partial
 
-__all__ = ["_Thread_probar", "_Thread_bar", "stop_thread","trydecorator", "trydecorator2"]
+__all__ = ["_Thread_probar", "_Thread_bar", "stop_thread","trydecorator", "trydecorator2", 'trydecorator3']
 
 
 cursor = Cursor()
 
 class Progress(metaclass=abc.ABCMeta):
+
     unit_percent = 0.034
     total_space = 30
     COLOR_bar = None
+    _COLOR = 0
 
-    def currentProgress(self, percent, t0, terminal):
+    def currentProgress(self, percent, t0, terminal, time_zone):
         cost_time = time.time() - t0
         total_time = cost_time / percent
         PERCENT = percent * 100
@@ -33,7 +37,8 @@ class Progress(metaclass=abc.ABCMeta):
         _PERCENT = f"{PERCENT: >6.2f}%"
         _COST = f" {cost_time}|{total_time} "
         _REMAIN = f" {remain_time}|{total_time} "
-        _ETC = f" ETC: {(datetime.datetime.now() + remain_time).strftime('%m-%d %H:%M:%S')}"
+        _ETC = f" ETC: {(pendulum.now(time_zone) + remain_time).strftime('%m-%d %H:%M:%S')}"
+        # _ETC = f" ETC: {(datetime.datetime.now() + remain_time).strftime('%m-%d %H:%M:%S')}"
         return _PERCENT, _REMAIN, _ETC
 
     def current_bar(self, percent, symbol_1="█", symbol_2='>'):
@@ -53,12 +58,10 @@ class Progress(metaclass=abc.ABCMeta):
         pass
 
     @staticmethod
-    def get_color(N_color, update=True, COLOR=[0]):
+    def get_color(N_color, update=True):
         """Choice random n colors
         """
-
-        if update == True or COLOR[0] == 0:
-
+        if update == True or Progress._COLOR == 0:
             # specify the first color
             rgb_list = [setRGB(rgb_dict["浅绿"])]
             for i in range(N_color - 2):
@@ -67,12 +70,14 @@ class Progress(metaclass=abc.ABCMeta):
 
             # specify the last color
             rgb_list.append(setRGB(rgb_dict["紫色"]))
-            COLOR[0] = rgb_list
-            return COLOR[0]
-        else:
-            return COLOR[0]
+            Progress._COLOR = rgb_list
 
-    def get_bar_color(self, N1, color, N_colors=4, flag_update_color=[None]):
+            return Progress._COLOR
+        else:
+            return Progress._COLOR
+
+    def get_bar_color(self, N1, color, N_colors=4, flag_update_color=[None], first_flag=True):
+
         if self.COLOR_bar == None:
             COLOR_bar = [''] * N_colors
 
@@ -111,7 +116,8 @@ class Progress(metaclass=abc.ABCMeta):
             raise ValueError("Invalid input!")
 
 class IntegProgress(Progress):
-    def appearance(self, idx, total_steps, symbol_1, symbol_2, t0, color, N_colors,terminal):
+
+    def appearance(self, idx, total_steps, symbol_1, symbol_2, t0, color, N_colors,terminal, first_flag,time_zone):
         counts = idx + 1
         percent = counts / total_steps
         if idx == 0:
@@ -119,8 +125,8 @@ class IntegProgress(Progress):
         else:
 
             SIGN, N1 = self.current_bar(percent, symbol_1, symbol_2)
-            _PERCENT, _REMAIN , _ETC = self.currentProgress(percent, t0, terminal)
-            color_percent, color_bar, color_etc, color_etc2 = self.get_bar_color(N1, color, N_colors=N_colors)
+            _PERCENT, _REMAIN , _ETC = self.currentProgress(percent, t0, terminal, time_zone)
+            color_percent, color_bar, color_etc, color_etc2 = self.get_bar_color(N1, color, N_colors, first_flag=first_flag)
             # color_percent,color_bar, color_etc, color_etc2 = setRGB(rgb_dict["灰色"]),setRGB(rgb_dict["粉色"]),
             # setRGB(rgb_dict["浅绿"]), setRGB(rgb_dict["天蓝"])
             print('\r' + color_percent + f"{_PERCENT}" + color_bar + SIGN + \
@@ -130,7 +136,7 @@ class IntegProgress(Progress):
 
 class _Thread_probar(Thread, IntegProgress):
     def __init__(self, deq, N, time_interval, symbol_1, symbol_2,
-                            t0, color, N_colors, terminal):
+                            t0, color, N_colors, terminal, time_zone):
         super().__init__()
         self.deq = deq
         self.stop = False
@@ -142,13 +148,21 @@ class _Thread_probar(Thread, IntegProgress):
         self.color=color
         self.N_colors=N_colors
         self.terminal=terminal
+        self.first_flag = True
+        self.time_zone=time_zone
+        self.lock = threading.Lock()
+
+
 
     def run(self):
+
         while not self.stop:
+
             # idx = self.queue.get()
             idx = self.deq[0]
             self.appearance(idx, self.N, self.symbol_1, self.symbol_2,
-                            self.t0, self.color, self.N_colors, self.terminal)
+                            self.t0, self.color, self.N_colors, self.terminal, first_flag=self.first_flag, time_zone=self.time_zone)
+
             time.sleep(self.time_interval)
             if idx == self.N-1:
                 self.stop = True
@@ -156,15 +170,16 @@ class _Thread_probar(Thread, IntegProgress):
 
 class SepaProgress(Progress):
     def appearance(self, idx, total_size,
-                   color='const_random',
-                   symbol_1="█", symbol_2='>',
-                   text='',
-                   terminal=True,
-                   t0=time.time()):
+                   color,
+                   symbol_1, symbol_2,
+                   text,
+                   terminal,
+                   t0,
+                   time_zone):
 
         percent = idx / total_size
         SIGN, N1 = self.current_bar(percent, symbol_1, symbol_2)
-        PERCENT, ETC_1, ETC_2 = self.currentProgress(percent, t0, terminal)
+        PERCENT, ETC_1, ETC_2 = self.currentProgress(percent, t0, terminal, time_zone)
         color_percent, color_bar, color_etc, color_etc2 = self.get_bar_color(N1, color, N_colors=4)
         if text != '': text += "|"
         print(f"\r{text}{color_percent}{PERCENT}{color_bar}{SIGN}{color_etc}{ETC_1}{color_etc2}{ETC_2}{OFF}{cursor.EraseLine(0)}",
@@ -174,7 +189,7 @@ class SepaProgress(Progress):
 class _Thread_bar(Thread, SepaProgress):
     def __init__(self, deq, N, time_interval,
                  symbol_1, symbol_2,
-                 color, text, terminal,t0):
+                 color, text, terminal,t0,time_zone):
 
         super().__init__()
         self.deq = deq
@@ -185,39 +200,40 @@ class _Thread_bar(Thread, SepaProgress):
         self.symbol_2=symbol_2
         self.color=color
         self.terminal=terminal
-        self.q_flag = 1 if isinstance(self.deq[0],tuple) else 0
+        self.time_zone=time_zone
+        # self.q_flag = 1 if isinstance(self.deq[0],tuple) else 0
 
     def run(self):
         while True:
-            if self.q_flag:
-                idx = self.deq[0][0]
-                text = self.deq[0][1]
-            else:
-                idx = self.deq[0]
-                text = ''
-
+            idx = self.deq[0][0]
             self.appearance(idx, self.N, self.color,
                             self.symbol_1, self.symbol_2,
-                            text,
+                            self.deq[0][1],
                             self.terminal,
-                            self.t0)
+                            self.t0,
+                            self.time_zone)
             time.sleep(self.time_interval)
             if idx == self.N:
                 break
 
-def _async_raise(tid, exctype):
-    tid = ctypes.c_long(tid)
-    if not inspect.isclass(exctype):
-        exctype = type(exctype)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
-    if res == 0:
-        raise ValueError("invalid thread id")
-    elif res != 1:
-        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
-        raise SystemError("PyThreadState_SetAsyncExc failed")
+
 
 def stop_thread(thread):
-    _async_raise(thread.ident, SystemExit)
+    import ctypes
+
+    id = thread.ident
+    code = ctypes.pythonapi.PyThreadState_SetAsyncExc(
+        ctypes.c_long(id),
+        ctypes.py_object(SystemError)
+    )
+    if code == 0:
+        raise ValueError('invalid thread id')
+    elif code != 1:
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(
+            ctypes.c_long(id),
+            ctypes.c_long(0)
+        )
+        raise SystemError('PyThreadState_SetAsyncExc failed')
 
 def trydecorator(__threadname=None):
     def middle(func):
@@ -225,9 +241,9 @@ def trydecorator(__threadname=None):
         def wrap(*args, **kwargs):
             try:
                 func(*args, **kwargs)
-            except KeyboardInterrupt:
+            except BaseException as e:
                 stop_thread(__threadname)
-                raise
+                raise e
         return wrap
     return middle
 
@@ -238,9 +254,26 @@ def trydecorator2(func=None, __threadname=None):
     def wrap(*args, **kwargs):
         try:
             func(*args, **kwargs)
-        except KeyboardInterrupt:
+        except BaseException as e:
             stop_thread(__threadname)
-            raise
+            raise e
     return wrap
 
+import sys
+def trydecorator3(func):
+    @wraps(func)
+    def wrap(*args, **kwargs):
+        global __threadbar
+        isInterrupt = False
+        try:
+            func(*args, **kwargs)
+        except BaseException as e:
+            stop_thread(__threadbar)
+            isInterrupt = True
+            raise e
+        finally:
+            if isInterrupt:
+                stop_thread(__threadbar)
+                sys.exit()
+    return wrap
 

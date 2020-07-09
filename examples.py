@@ -2,6 +2,7 @@ from pyprobar.styleString import rgb_str
 from pyprobar import probar, bar
 import time
 
+
 R,G,B = 255,0,0
 s1 = rgb_str("I'm red", [R,G,B])
 s2 = rgb_str("I'm green", [0, 255, 0])
@@ -14,7 +15,7 @@ def test_probar1():
         time.sleep(0.0061)
 
 def test_probar2():
-    res = [i for i in probar(range(10), enum=False) ]
+    res = [i for i in probar(range(10), enum=False)]
     print(res)
 
 def test_probar3():
@@ -30,16 +31,17 @@ def test_custom_color():
 
 def test_performance():
     from tqdm import tqdm
-    N = 5000000
+    N = 50000000
     print("probar:")
-    for i in probar(range(N), color='1', time_interval=0.02):
+
+    for i in probar(range(N),  time_interval=0.02, time_zone="Asia/Shanghai"):#color='1',
         pass
     time.sleep(0.1)
     
-    print('bar:')
-    for idx, i in enumerate(range(N)):
-        bar(idx, N, text=f'{idx+1}', color='5')
-
+    # print('bar:')
+    # for idx, i in enumerate(range(N)):
+    #     bar(idx, N, text='', color='5', time_zone="Europe/Brussels")
+    #
     print("tqdm:")
     for i in tqdm(range(N)):
         pass
