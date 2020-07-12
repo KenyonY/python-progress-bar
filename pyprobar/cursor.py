@@ -2,19 +2,20 @@ import abc
 from .styleString import setRGB, CSI, OFF, rgb_str
 import sys
 
+
 class BaseCursor(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def FORWARD(self,*args, **kwargs):
+    def FORWARD(self, *args, **kwargs):
         '''Forward move'''
         pass
 
     @abc.abstractmethod
-    def BACK(self,*args, **kwargs):
+    def BACK(self, *args, **kwargs):
         '''Backward move'''
         pass
 
     @abc.abstractmethod
-    def PreLINE(self,*args, **kwargs):
+    def PreLINE(self, *args, **kwargs):
         """Moves cursor to beginning of the line n (default 1) lines up.
         No any character will be cleared.
         """
@@ -48,29 +49,37 @@ class BaseCursor(metaclass=abc.ABCMeta):
     def getPOS(self):
         pass
 
+
 def send(code):
     sys.stdout.write(code)
     sys.stdout.flush()
 
+
 def csi(n, code):
     return CSI + str(n) + code
+
 
 class Cursor(BaseCursor):
     '''See: http://en.wikipedia.org/wiki/ANSI_escape_code'''
     def UP(self, n=1):
         """Moves the cursor n (default 1) cells in the given direction."""
         return csi(n, 'A')
+
     def DOWN(self, n=1):
         """Moves the cursor n (default 1) cells in the given direction."""
         return csi(n, 'B')
+
     def FORWARD(self, n=1):
         """Moves the cursor n (default 1) cells in the given direction."""
         return csi(n, 'C')
+
     def BACK(self, n=1):
         """Moves the cursor n (default 1) cells in the given direction."""
         return csi(n, 'D')
-    def NextLINE(self,n=1):
+
+    def NextLINE(self, n=1):
         return csi(n, 'E')
+
     def PreLINE(self, n=1):
         """Moves cursor to beginning of the line n (default 1) lines up.
         No any character are cleared.
@@ -112,7 +121,7 @@ class Cursor(BaseCursor):
         """
         return csi(n, "S")
 
-    def  ScrollDown(self, n=0):
+    def ScrollDown(self, n=0):
         """Scroll whole page down by n (default 1) lines.
         New lines are added at the top. """
         return csi(n, "T")
@@ -154,4 +163,3 @@ if __name__ == "__main__":
         """)
 
     test()
-
