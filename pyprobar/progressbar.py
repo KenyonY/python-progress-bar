@@ -9,6 +9,8 @@ class probar:
     :arg color: options  'const_random', '0','1','2',...,'5'
         or a RGB list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
     :arg enum: enumerate mode
+    :arg time_zone: 'UTC', 'Asia/Shanghai', 'Europe/Brussels', ... You can use method:`pendulum.timezones`
+        to get all avalable timezone list.
     :arg time_interval: Progress bar refresh interval
 
     Examples
@@ -85,6 +87,8 @@ def bar(index,
     Do not use it in jupyter notebook/lab or ipython kernel.
     :arg color: options  'const_random', '0','1','2',...,'5',
         or RGB a list, such as [250,205,229] or [[146,52,247],[250,205,229],[66,227,35],[214,126,209]]
+    :arg time_zone: 'UTC', 'Asia/Shanghai', 'Europe/Brussels', ... You can use method:`pendulum.timezones`
+    to get all avalable timezone list.
     Examples
     --------
     >>> for idx, i in enumerate(range(1000)):
