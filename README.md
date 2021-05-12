@@ -171,10 +171,9 @@ from pyprobar.styleString import rgb_str
 
 ### TODO
 
-- [x] Thread problem with probar()  in jupyter notebook
+- [x] Thread problem: with `probar()`  in jupyter notebook. Solved.
 - [ ] Thread  problem with `bar()`  in jupyter notebook
 - [ ] Speed of information
-- [ ] Multithreading
 
 
 
