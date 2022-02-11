@@ -176,4 +176,8 @@ from pyprobar.styleString import rgb_str
 - [ ] Speed of information
 
 
+## Backer and Sponsor
 
+<a href="https://www.jetbrains.com/?from=beidongjiedeguang/python-progress-bar" target="_blank">
+<img src="https://github.com/beidongjiedeguang/python-progress-bar/blob/dev/picture/jetbrains.svg" width="100px" height="100px">
+</a>
